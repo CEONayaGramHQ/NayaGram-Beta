@@ -20,14 +20,16 @@ jobs:
     steps:
 
       # =========================
-      # 1. CHECKOUT SOURCE CODE
+      # 12. INITIALIZE LIBRARIES
       # =========================
-      - name: Checkout NayaGram source
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-          fetch-depth: 0
-
+      - name: Initialize native libraries
+        run: |
+          if [ -f "./run" ]; then
+            ./run init libs
+          else
+            echo "ERROR: ./run script was not found"
+            exit 1
+          fi
 
       # =========================
       # 2. INSTALL JAVA
