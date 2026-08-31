@@ -1,40 +1,53 @@
-name: Build NayaGram Android APK
-on: [push]
+name: Build NayaGram APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - master
+
+permissions:
+  contents: read
+
 jobs:
   build:
+    name: Build NayaGram Android APK
     runs-on: ubuntu-latest
+    timeout-minutes: 60
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout NayaGram source
+        uses: actions/checkout@v4
         with:
           submodules: recursive
-      - name: set up JDK 17
+          fetch-depth: 0
+
+      - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
           distribution: 'temurin'
-      - name: Setup Android SDK
+          java-version: '17'
+          cache: gradle
+
+      - name: Set up Android SDK
         uses: android-actions/setup-android@v3
-      - name: Setup NDK
-        run: |
-          sdkmanager --install "ndk;25.1.8937393"
-          echo "ANDROID_NDK_HOME=$ANDROID_SDK_ROOT/ndk/25.1.8937393" >> $GITHUB_ENV
-      - name: Make gradlew executable
-        run: chmod +x./gradlew
-      - name: Build APK
-        run:./gradlew assembleAfatDebug --no-daemon
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: NayaGram-APK
-          path: TMessagesProj_App/build/outputs/apk/afat/debug/*.apk        run: yes | sdkmanager --licenses || true
 
       - name: Make build scripts executable
         run: chmod +x ./gradlew
 
       - name: Build NayaGram APK
-        run: |
-          ./gradlew assembleAfatDebug --stacktrace
+        run: ./gradlew assembleAfatDebug --stacktrace --no-daemon
 
+      - name: Upload NayaGram APK
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: NayaGram-APK
+          path: |
+            **/build/outputs/apk/**/*.apk
+          if-no-files-found: warn
+          retention-days: 7
       - name: Upload NayaGram APK
         if: success()
         uses: actions/upload-artifact@v4
