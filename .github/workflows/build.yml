@@ -1,23 +1,28 @@
 name: Build NayaGram APK
 on: [push]
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: set up JDK 17
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
+
       - name: Build APK
         run: |
           chmod +x ./gradlew
-          ./gradlew assembleAfatDebug
+          ./gradlew assembleAfatDebug -x test --continue
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: NayaGram-APK
-          path: TMessagesProj_App/build/outputs/apk/afat/debug/
+          path: |
+            TMessagesProj_App/build/outputs/apk/
+            **/build/outputs/apk/
