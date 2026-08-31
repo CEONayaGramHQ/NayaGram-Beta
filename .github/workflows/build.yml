@@ -12,10 +12,10 @@ jobs:
           distribution: 'temurin'
       - name: Build APK
         run: |
-          chmod +x./gradlew
-         ./gradlew assembleAfatRelease
+          chmod +x ./gradlew
+          ./gradlew assembleAfatDebug
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: NayaGram-APK
-          path: TMessagesProj_App/build/outputs/apk/afat/release/
+          path: TMessagesProj_App/build/outputs/apk/afat/debug/
