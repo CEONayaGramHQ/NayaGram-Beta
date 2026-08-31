@@ -40,8 +40,8 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
-      - name: Build APK
-        run: ./gradlew assembleAfatDebug --no-daemon --stacktrace
+      - name: Build APK without stripping
+        run: ./gradlew assembleAfatDebug -Pandroid.keepTimestampsInApk=true -Pandroid.stripDebugSymbol.enable=false --no-daemon --stacktrace
 
       - name: Upload NayaGram APK
         uses: actions/upload-artifact@v4
