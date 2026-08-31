@@ -37,29 +37,24 @@ jobs:
           echo "sdk.dir=$ANDROID_SDK_ROOT" >> local.properties
           echo "ndk.dir=$ANDROID_SDK_ROOT/ndk/27.2.12479018" >> local.properties
 
-      - name: Make gradlew executable
-        run: chmod +x ./gradlew
-
-      - name: Build APK without native lib conflicts
+      - name: Fix Duplicate Native Libs Conflict
         run: |
-          ./gradlew assembleAfatDebug \
-            -Pandroid.keepTimestampsInApk=true \
-            -Pandroid.stripDebugSymbol.enable=false \
-            -Pandroid.packagingOptions.pickFirsts="**/*.so" \
-            --no-daemon --stacktrace
+          cat << 'EOF' >> TMessagesProj/build.gradle
 
-      - name: Upload NayaGram APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: NayaGram-APK
-          path: "**/build/outputs/apk/**/*.apk"          echo "sdk.dir=$ANDROID_SDK_ROOT" >> local.properties
-          echo "ndk.dir=$ANDROID_SDK_ROOT/ndk/27.2.12479018" >> local.properties
+          android {
+              packagingOptions {
+                  pickFirst '**/libtmessages*.so'
+                  pickFirst '**/*.so'
+                  doNotStrip '**/*.so'
+              }
+          }
+          EOF
 
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
-      - name: Build APK without stripping
-        run: ./gradlew assembleAfatDebug -Pandroid.keepTimestampsInApk=true -Pandroid.stripDebugSymbol.enable=false --no-daemon --stacktrace
+      - name: Build APK
+        run: ./gradlew assembleAfatDebug --no-daemon --stacktrace
 
       - name: Upload NayaGram APK
         uses: actions/upload-artifact@v4
