@@ -37,15 +37,20 @@ jobs:
           echo "sdk.dir=$ANDROID_SDK_ROOT" >> local.properties
           echo "ndk.dir=$ANDROID_SDK_ROOT/ndk/27.2.12479018" >> local.properties
 
-      - name: Fix Duplicate Native Libs Conflict
+      - name: Fix Packaging Options for Gradle
         run: |
           cat << 'EOF' >> TMessagesProj/build.gradle
 
           android {
               packagingOptions {
-                  pickFirst '**/libtmessages*.so'
-                  pickFirst '**/*.so'
-                  doNotStrip '**/*.so'
+                  resources {
+                      picks.add('**/libtmessages*.so')
+                      picks.add('**/*.so')
+                  }
+                  jniLibs {
+                      pickFirsts.add('**/libtmessages*.so')
+                      pickFirsts.add('**/*.so')
+                  }
               }
           }
           EOF
@@ -54,7 +59,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build APK
-        run: ./gradlew assembleAfatDebug --no-daemon --stacktrace
+        run: ./gradlew assembleAfatDebug -Pandroid.stripDebugSymbol.enable=false --no-daemon --stacktrace
 
       - name: Upload NayaGram APK
         uses: actions/upload-artifact@v4
