@@ -1,7 +1,7 @@
 name: Build NayaGram Android APK
 
 on:
-  workflow_dispatch:
+ branch_protection_rule: workflow_dispatch:
   push:
     branches:
       - main
