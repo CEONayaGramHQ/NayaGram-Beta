@@ -44,8 +44,13 @@ jobs:
           android {
               packagingOptions {
                   resources {
-                      picks.add('**/libtmessages*.so')
-                      picks.add('**/*.so')
+                      pickFirsts.add('**/libtmessages*.so')
+                      pickFirsts.add('**/*.so')
+                      excludes.add('META-INF/DEPENDENCIES')
+                      excludes.add('META-INF/LICENSE')
+                      excludes.add('META-INF/LICENSE.txt')
+                      excludes.add('META-INF/NOTICE')
+                      excludes.add('META-INF/NOTICE.txt')
                   }
                   jniLibs {
                       pickFirsts.add('**/libtmessages*.so')
