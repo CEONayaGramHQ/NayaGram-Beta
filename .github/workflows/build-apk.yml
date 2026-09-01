@@ -1,7 +1,7 @@
 name: Build NayaGram Android APK
 
 on:
- branch_protection_rule: workflow_dispatch:
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -65,6 +65,12 @@ jobs:
 
       - name: Build APK
         run: ./gradlew assembleAfatDebug -Pandroid.stripDebugSymbol.enable=false --no-daemon --stacktrace
+
+      - name: Run Claude AI Task
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          echo "Claude AI is ready to contribute!"
 
       - name: Upload NayaGram APK
         uses: actions/upload-artifact@v4
